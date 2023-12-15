@@ -1,172 +1,161 @@
-import os
+import os,time 
+#dictionary for every item sold in the vending machine
+drinks_dict = {
+    "D1": {"name": "Water", "stock": 5, "price": "2"},
+    "D2": {"name": "Coffee", "stock": 5, "price": "5"},
+    "D3": {"name": "Tea", "stock": 5, "price": "2"},
+    "D4": {"name": "Orange Juice", "stock": 5, "price": "4"},
+    "D5": {"name": "Coca Cola", "stock": 5, "price": "4"},
+    "D6": {"name": "Prime", "stock": 5, "price": "29"},
+    "D7": {"name": "Milkshake", "stock": 5, "price": "15"},
+    "D8": {"name": "Green Smoothie", "stock": 5, "price": "20"},
+    "D9": {"name": "Hot Chocolate", "stock": 5, "price": "20"},
+    "D10": {"name": "Liquid Death", "stock": 5, "price": "25"}
+    }
 
-drinks = {
-    1: "Water",
-    2: "Coffee",
-    3: "Tea",
-    4: "Orange Juice",
-    5: "Coca-Cola",
-    6: "Prim",
-    7: "Milkshake",
-    8: "Green Smoothie",
-    9: "Hot Chocolate",
-    10: "Lean"
-}
-drinks_stock = {
-    'water': '5',
-    'Coffee'
-    'Tea': '5',
-    'Orange Juice': '5',
-    'Coca-Cola': '5',
-    'Prim': '5',
-    'Milkshake': '5',
-    'Green Smoothie': '5',
-    'Hot Chocolate': '5',
-    'Lean': '5'
-}
+snacks_dict = {
+    "S1": {"name": "Doritos", "stock": 5, "price": "3"},
+    "S2": {"name": "Potato Chips", "stock": 5, "price": "5"},
+    "S3": {"name": "Trail Mix", "stock": 5, "price": "4"},
+    "S4": {"name": "Pretzels", "stock": 5, "price": "6"},
+    "S5": {"name": "Fruit Slices", "stock": 5, "price": "9"}
+    }
+#Client's balance that can be changed
+Client_balance = 0
 
-drinks_price = {
-    1: "2",
-    2: "5",
-    3: "2",
-    4: "4",
-    5: "4",
-    6: "29",
-    7: "20",
-    8: "15",
-    9: "20",
-    10: "25"
-}
+#Ascii art for titles
+def Big_Drinks_list():
+    print("""\n  ██╗██████╗ ██████╗ ██╗███╗   ██╗██╗  ██╗███████╗██╗  
+ ██╔╝██╔══██╗██╔══██╗██║████╗  ██║██║ ██╔╝██╔════╝╚██╗ 
+██╔╝ ██║  ██║██████╔╝██║██╔██╗ ██║█████╔╝ ███████╗ ╚██╗
+╚██╗ ██║  ██║██╔══██╗██║██║╚██╗██║██╔═██╗ ╚════██║ ██╔╝
+ ╚██╗██████╔╝██║  ██║██║██║ ╚████║██║  ██╗███████║██╔╝ 
+  ╚═╝╚═════╝ ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚═╝""")
+    Drinks_list()
 
-snacks = {
-    1: "Doritos",
-    2: "Potato Chips",
-    3: "Trail Mix",
-    4: "Pretzels",
-    5: "Fruit Slices"
-}
+def Big_Snacks_list():
+    print ("""\n  ██╗███████╗███╗   ██╗ █████╗  ██████╗██╗  ██╗███████╗██╗  
+ ██╔╝██╔════╝████╗  ██║██╔══██╗██╔════╝██║ ██╔╝██╔════╝╚██╗ 
+██╔╝ ███████╗██╔██╗ ██║███████║██║     █████╔╝ ███████╗ ╚██╗
+╚██╗ ╚════██║██║╚██╗██║██╔══██║██║     ██╔═██╗ ╚════██║ ██╔╝
+ ╚██╗███████║██║ ╚████║██║  ██║╚██████╗██║  ██╗███████║██╔╝ 
+  ╚═╝╚══════╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝""")
+    Snacks_list()
 
-snacks_price = {
-    1: "3",
-    2: "5",
-    3: "4",
-    4: "6",
-    5: "9"
-}
+def Logo():
+    print ("""██╗   ██╗███████╗███╗   ██╗██████╗ ██╗███╗   ██╗ ██████╗     ███╗   ███╗ █████╗  ██████╗██╗  ██╗██╗███╗   ██╗███████╗    ███████╗   ██████╗ 
+██║   ██║██╔════╝████╗  ██║██╔══██╗██║████╗  ██║██╔════╝     ████╗ ████║██╔══██╗██╔════╝██║  ██║██║████╗  ██║██╔════╝    ██╔════╝   ╚════██╗
+██║   ██║█████╗  ██╔██╗ ██║██║  ██║██║██╔██╗ ██║██║  ███╗    ██╔████╔██║███████║██║     ███████║██║██╔██╗ ██║█████╗      ███████╗    █████╔╝
+╚██╗ ██╔╝██╔══╝  ██║╚██╗██║██║  ██║██║██║╚██╗██║██║   ██║    ██║╚██╔╝██║██╔══██║██║     ██╔══██║██║██║╚██╗██║██╔══╝      ╚════██║    ╚═══██╗
+ ╚████╔╝ ███████╗██║ ╚████║██████╔╝██║██║ ╚████║╚██████╔╝    ██║ ╚═╝ ██║██║  ██║╚██████╗██║  ██║██║██║ ╚████║███████╗    ███████║██╗██████╔╝
+  ╚═══╝  ╚══════╝╚═╝  ╚═══╝╚═════╝ ╚═╝╚═╝  ╚═══╝ ╚═════╝     ╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚══════╝    ╚══════╝╚═╝╚═════╝""")
 
-snacks_stock = {
-    'Doritos': '5',
-    'Potato Chips'
-    'Trail Mix': '5',
-    'Pretzels': '5',
-    'Fruit Slices': '5',
-}
+def checkout():
+    print("""██╗  ██╗  ██╗  ██╗   ██████╗██╗  ██╗███████╗ ██████╗██╗  ██╗ ██████╗ ██╗   ██╗████████╗
+╚██╗ ╚██╗ ╚██╗ ╚██╗ ██╔════╝██║  ██║██╔════╝██╔════╝██║ ██╔╝██╔═══██╗██║   ██║╚══██╔══╝
+ ╚██╗ ╚██╗ ╚██╗ ╚██╗██║     ███████║█████╗  ██║     █████╔╝ ██║   ██║██║   ██║   ██║   
+ ██╔╝ ██╔╝ ██╔╝ ██╔╝██║     ██╔══██║██╔══╝  ██║     ██╔═██╗ ██║   ██║██║   ██║   ██║   
+██╔╝ ██╔╝ ██╔╝ ██╔╝ ╚██████╗██║  ██║███████╗╚██████╗██║  ██╗╚██████╔╝╚██████╔╝   ██║   
+╚═╝  ╚═╝  ╚═╝  ╚═╝   ╚═════╝╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝""")
 
-def display_options(category, items):
-    print(f"\n{category}")
+# a funtion that lists drinks
+def Drinks_list():
+    for item_id, item_info in drinks_dict.items():
+        print(f"{item_id}: {item_info['name']} - {item_info['price']} AED")
 
-    for key, value in items.items():
-        print(f"{key}: {value}")
+# a funtion that lists snacks
+def Snacks_list():
+    for item_id, item_info in snacks_dict.items():
+        print(f"{item_id}: {item_info['name']} - {item_info['price']} AED")
 
-#SNAAAACCCKKKSSS
-def payment_snacks():
-    coin = input("(placeholder) which do you want?: ")
-    os.system('cls')    
-    
-    if coin.isdigit() and int(coin) in snacks:
+def suggest_items():
+    os.system('cls')  # clears the previous outputs for a clean UI
+    print(f"\nYour Balance: ${Client_balance}")  # shows clients current balance
 
-        selected_item = snacks[int(coin)]
-        item_price = snacks_price[int(coin)]
-        print(f"Selected: {selected_item}")
+    # Suggest drinks within budget
+    print("\nSuggested Drinks:")
+    for item_id, item_info in drinks_dict.items():
+        price = int(item_info['price'])
+        if price <= Client_balance and item_info['stock'] > 0:
+            print(f"{item_id}: {item_info['name']} - {item_info['price']} AED")
+
+    # Suggest snacks within budget
+    print("\nSuggested Snacks:")
+    for item_id, item_info in snacks_dict.items():
+        price = int(item_info['price'])
+        if price <= Client_balance and item_info['stock'] > 0:
+            print(f"{item_id}: {item_info['name']} - {item_info['price']} AED")
+
+# a funtion that serves as the main logic behind the vending machine
+def Calculations():
+    os.system('cls') #clears the previous outputs for a clean UI
+    print(f"\nYour Balance: ${Client_balance}") #shows clients current balance
+    Big_Drinks_list()
+    Big_Snacks_list()
+    try:
+        selection = input("\nSelect a product: ")
+        os.system('cls')
+        if selection in drinks_dict:
+            Item = drinks_dict[selection]#this section
+            if Item['stock'] <= 0:#checks if-
+                print("sorry out of stock")#the item is in stock
+                
+            else:
+                Paysafe(Item) #redirects to payment function
+        elif selection in snacks_dict:
+            Item = snacks_dict[selection]#this section
+            if Item['stock'] <= 0:#checks if-
+                print("sorry out of stock")#the item is in stock
+                
+            else:
+                Paysafe(Item) #redirects to payment function
+
+        else:
+            Calculations() # this repeats the function if the user did not input a valid option
+    except ValueError:
+        print('Please enter a valid number.') #this tells the user to actually put a number in the input area
         os.system('cls')
 
-        #broken
-        money_inserted = input("(placeholder) Enter money: ")
+#function for paying         
+def Paysafe(Item):
+    global Client_balance #this one specifically makes sure the client's balance is chamged for the entire script and not just the balance inside the script
+    checkout() #Ascii art!!! <3
+    print(f"\nSelected item: {Item['name']} - {Item['price']} AED") #prints the name and price of the item selected
 
-        if money_inserted.isdigit() and int(money_inserted) >= int(item_price):
 
-            Change = int(money_inserted) - int(item_price)
-            print(f"(placeholder) Enjoy your {selected_item}.")
-            print(f"your change is ${Change}")
-        
+    try:
+        quantity = int(input("Enter quantity: "))
+
+        if quantity > Item['stock']:
+            print("Insufficient stock.")
         else:
-            print("(placeholder) canceled.")#no ui fix this
+            total_price = int(Item['price']) * quantity
 
-    else:
-        print("(placeholder) no selection")#ui later
+            if total_price > Client_balance:
+                print("Insufficient balance.")
+                time.sleep(2.5)
+                os.system('cls')
+            else:
+                Client_balance -= total_price
+                reduce_stock(Item, quantity)
+                print(f"Payment successful! Remaining balance: ${Client_balance}")
+                input("press enter to continue")
+    except ValueError:
+        print('Please enter a valid number.')
 
-#DRINKKKKSSSSS WOOOOO YEAAAHH BABY
-def payment_drinks():
-    coin = input("(placeholder) which do you want?: ")
-    os.system('cls')  
-    
-    if coin.isdigit() and int(coin) in drinks:
+def reduce_stock(Item, quantity):
+    Item['stock'] -= quantity
 
-        selected_item = drinks[int(coin)]
-        print(f"Selected: {selected_item}")
-        print("(placeholder)")
-
-        #broken
-        money_inserted = input("(placeholder) Enter money: ")
-
-        if money_inserted.isdigit() and int(money_inserted) >= 0:
-            print(f"(placeholder) Enjoy your {selected_item}.")
-        
-        else:
-            print("(placeholder) canceled.")#no ui fix this
-
-    else:
-        print("(placeholder) no selection")#ui later
-
-
-
-#this part is the actual vending machine part
-#no ui fix later
+#this section is the entire vending machine
 while True:
-    print("""\n██    ██ ███████ ███    ██ ██████  ██ ███    ██  ██████      ███    ███  █████   ██████ ██   ██ ██ ███    ██ ███████ 
-██    ██ ██      ████   ██ ██   ██ ██ ████   ██ ██           ████  ████ ██   ██ ██      ██   ██ ██ ████   ██ ██      
-██    ██ █████   ██ ██  ██ ██   ██ ██ ██ ██  ██ ██   ███     ██ ████ ██ ███████ ██      ███████ ██ ██ ██  ██ █████   
- ██  ██  ██      ██  ██ ██ ██   ██ ██ ██  ██ ██ ██    ██     ██  ██  ██ ██   ██ ██      ██   ██ ██ ██  ██ ██ ██      
-  ████   ███████ ██   ████ ██████  ██ ██   ████  ██████      ██      ██ ██   ██  ██████ ██   ██ ██ ██   ████ ███████ 
-                                                                                                                     
-                                                                                                                     """)
-    print("1: Drinks")
-    print("2: Snacks")
-    print("0: Exit")
-
-
-
-
-
-
-
-    user_choice = input("======>: ")
     os.system('cls')
+    Logo()
+    print(f"\nYour Balance: ${Client_balance}") #shows clients current balance
+    try:
+        Currency = int(input("\nInsert Money: $"))
+        Client_balance = Client_balance + int(Currency) #changes the client's money to the inputed one
+        Calculations()
 
-    if user_choice == "0":
-        print("(placeholder)")
-        break
-
-    if user_choice == "1":
-        display_options("""██████  ██████  ██ ███    ██ ██   ██ ███████ 
-██   ██ ██   ██ ██ ████   ██ ██  ██  ██      
-██   ██ ██████  ██ ██ ██  ██ █████   ███████ 
-██   ██ ██   ██ ██ ██  ██ ██ ██  ██       ██ 
-██████  ██   ██ ██ ██   ████ ██   ██ ███████ 
-                                             
-                                             """, drinks)
-        
-        payment_drinks()
-
-    elif user_choice == "2":
-        display_options("""███████ ███    ██  █████   ██████ ██   ██ ███████ 
-██      ████   ██ ██   ██ ██      ██  ██  ██      
-███████ ██ ██  ██ ███████ ██      █████   ███████ 
-     ██ ██  ██ ██ ██   ██ ██      ██  ██       ██ 
-███████ ██   ████ ██   ██  ██████ ██   ██ ███████ 
-                                                  
-                                                  """, snacks)
-        payment_snacks()
-    else:
-        print("(placeholder)")
-        continue
+    except ValueError:
+        print('Please enter a valid number.') #this tells the user to actually put a number in the input area
+        os.system('cls')
