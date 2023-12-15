@@ -68,24 +68,6 @@ def Snacks_list():
     for item_id, item_info in snacks_dict.items():
         print(f"{item_id}: {item_info['name']} - {item_info['price']} AED")
 
-def suggest_items():
-    os.system('cls')  # clears the previous outputs for a clean UI
-    print(f"\nYour Balance: ${Client_balance}")  # shows clients current balance
-
-    # Suggest drinks within budget
-    print("\nSuggested Drinks:")
-    for item_id, item_info in drinks_dict.items():
-        price = int(item_info['price'])
-        if price <= Client_balance and item_info['stock'] > 0:
-            print(f"{item_id}: {item_info['name']} - {item_info['price']} AED")
-
-    # Suggest snacks within budget
-    print("\nSuggested Snacks:")
-    for item_id, item_info in snacks_dict.items():
-        price = int(item_info['price'])
-        if price <= Client_balance and item_info['stock'] > 0:
-            print(f"{item_id}: {item_info['name']} - {item_info['price']} AED")
-
 # a funtion that serves as the main logic behind the vending machine
 def Calculations():
     os.system('cls') #clears the previous outputs for a clean UI
@@ -128,6 +110,8 @@ def Paysafe(Item):
 
         if quantity > Item['stock']:
             print("Insufficient stock.")
+            input("press enter to continue")
+
         else:
             total_price = int(Item['price']) * quantity
 
