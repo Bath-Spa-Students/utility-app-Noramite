@@ -106,20 +106,23 @@ def Paysafe(Item):
 
 
     try:
-        quantity = int(input("Enter quantity: "))
-
-        if quantity > Item['stock']:
+        quantity = int(input("Enter quantity: ")) #asks user how many items they want
+        
+        #checks if the vending machine still has stock and if it doesnt, it will tell the user its out of stock
+        if quantity > Item['stock']: 
             print("Insufficient stock.")
             input("press enter to continue")
 
         else:
-            total_price = int(Item['price']) * quantity
+            total_price = int(Item['price']) * quantity #this is simple math to calculate the price if the user wants more than one item
 
+            #this part checks if the user still has balance and if not will tell the user they dont have enough money
             if total_price > Client_balance:
                 print("Insufficient balance.")
                 time.sleep(2.5)
                 os.system('cls')
             else:
+                #if the client has money it will allow them to buy
                 Client_balance -= total_price
                 reduce_stock(Item, quantity)
                 print(f"Payment successful! Remaining balance: ${Client_balance}")
@@ -127,6 +130,7 @@ def Paysafe(Item):
     except ValueError:
         print('Please enter a valid number.')
 
+#this part reduces stock for an item selected in the vending machine
 def reduce_stock(Item, quantity):
     Item['stock'] -= quantity
 
